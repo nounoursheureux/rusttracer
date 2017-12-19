@@ -1,0 +1,8 @@
+[package]
+name = "rusttracer"
+version = "0.1.0"
+authors = ["Wilhem Barbier <wilhem.b@free.fr>"]
+
+[dependencies]
+png = "0.11.0"
+cgmath = "0.15.0"
