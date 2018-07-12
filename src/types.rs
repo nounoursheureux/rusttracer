@@ -16,5 +16,9 @@ impl Ray {
 			direction: direction.normalize()
 		}
 	}
+
+	pub fn at(&self, t: f32) -> Vec3f {
+		self.origin + t * self.direction
+	}
 }
 

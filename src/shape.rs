@@ -4,6 +4,11 @@ use cgmath::vec3;
 use util::*;
 use types::*;
 
+/* pub struct Vertex {
+	pub position: Vec3f;
+	pub normal:
+} */
+
 pub trait Shape {
 	fn normal(&self, point: Vec3f) -> Vec3f;
 	fn get_closest_hit(&self, ray: Ray) -> Option<f32>;
