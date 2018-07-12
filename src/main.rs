@@ -6,14 +6,16 @@ mod shape;
 mod types;
 mod util;
 mod mesh;
+mod object;
 
 use cgmath::vec3;
 use cgmath::prelude::*;
 use std::path::Path;
 use image::{Image, Color};
 use shape::{Shape, Sphere, Triangle};
-use types::{Ray, Vec3f};
+use types::*;
 use util::*;
+use object::*;
 use mesh::Mesh;
 
 fn main() {
@@ -22,8 +24,10 @@ fn main() {
 		center: Vec3f{ x: 0.0, y: 0.0, z: 0.0},
 		radius: 0.3,
 	};
-	let suzanne = Mesh::load(Path::new(r"suzanne.obj")).unwrap();
-	println!("{}", suzanne.vertices.len());
+	let suzanne_mesh = Mesh::load(Path::new(r"suzanne.obj")).unwrap();
+	println!("{}", suzanne_mesh.vertices.len());
+	let transform = Matrix4f::from_translation(vec3(0.0, -0.3, 0.0));
+	let suzanne = Object::new(&suzanne_mesh, transform);
 	let triangle = Triangle::new(vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(0.0, 0.0, 0.0));
 	let width: u32 = 500;
 	let height: u32 = 500;
