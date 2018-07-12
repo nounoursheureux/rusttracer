@@ -6,11 +6,23 @@ use std::fs::File;
 use std::io::BufWriter;
 use self::png::HasParameters;
 use self::png::EncodingError;
+use types::Vec3f;
 
+#[derive(Copy, Clone)]
 pub struct Color {
 	pub r: f32,
 	pub g: f32,
 	pub b: f32,
+}
+
+impl Color {
+	pub fn new(r: f32, g: f32, b: f32) -> Color {
+		Color { r: r, g: g, b: b }
+	}
+
+	pub fn from_vec(v: Vec3f) -> Color {
+		Color { r: v.x, g: v.y, b: v.z }
+	}
 }
 
 pub struct Image {
