@@ -7,6 +7,7 @@ mod types;
 mod util;
 mod mesh;
 mod object;
+// mod bvh;
 
 use cgmath::vec3;
 use cgmath::prelude::*;
@@ -24,11 +25,11 @@ fn main() {
 		center: Vec3f{ x: 0.0, y: 0.0, z: 0.0},
 		radius: 0.3,
 	};
-	let suzanne_mesh = Mesh::load(Path::new(r"suzanne.obj")).unwrap();
+	let suzanne_mesh = Mesh::load(Path::new(r"cube.obj")).unwrap();
 	println!("{}", suzanne_mesh.vertices.len());
-	let transform = Matrix4f::from_translation(vec3(0.0, -0.3, 0.0));
+	let transform = Matrix4f::from_scale(0.1);
 	let suzanne = Object::new(&suzanne_mesh, transform);
-	let triangle = Triangle::new(vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(0.0, 0.0, 0.0));
+	// let triangle = Triangle::new(vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(0.0, 0.0, 0.0));
 	let width: u32 = 500;
 	let height: u32 = 500;
 	let mut pixels: Vec<Color> = vec![Color { r: 0.0, g: 0.0, b: 0.0}; (width * height) as usize];
@@ -56,7 +57,8 @@ fn main() {
 			if let Some(inter) = suzanne.intersects(camera_ray) {
 				let L = (light_pos - inter.position).normalize();
 				let intensity = L.dot(inter.normal);
-				pixels[(pixel_y * width + pixel_x) as usize] = Color::new(1.0 * intensity, 0.0, 0.0);
+				// pixels[(pixel_y * width + pixel_x) as usize] = Color::new(1.0 * intensity, 0.0, 0.0);
+				pixels[(pixel_y * width + pixel_x) as usize] = Color::from_vec(inter.normal);
 			}
 		}
 	}

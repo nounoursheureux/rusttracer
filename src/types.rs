@@ -1,8 +1,10 @@
-use cgmath::{Vector3, Matrix4};
+use cgmath::{Vector3, Matrix4, Point3, Point2};
 use cgmath::prelude::*;
 
 pub type Vec3f = Vector3<f32>;
 pub type Matrix4f = Matrix4<f32>;
+pub type Point2f = Point2<f32>;
+pub type Point3f = Point3<f32>;
 
 #[derive(Copy, Clone)]
 pub struct Ray {

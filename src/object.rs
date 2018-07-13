@@ -2,11 +2,12 @@ use mesh::*;
 use types::*;
 use cgmath::prelude::*;
 use cgmath::vec4;
-use shape::{Triangle, Shape};
+use shape::{Triangle, Shape, Vertex};
 
 pub struct Object {
     pub vertices: Vec<Vertex>,
     pub faces: Vec<Face>,
+    pub triangles: Vec<Triangle>,
     pub transform: Matrix4f
 }
 
@@ -19,28 +20,46 @@ impl Object {
                 normal: (inv_trans * vert.normal.extend(0.0)).truncate() 
             }
         }).collect();
-        Object { vertices: new_vertices, faces: mesh.faces.clone(), transform: transform }
+        let mut triangles = Vec::new();
+        for f in mesh.faces.iter() {
+            let v1 = new_vertices[f.v1_off];
+            let v2 = new_vertices[f.v2_off];
+            let v3 = new_vertices[f.v3_off];
+            triangles.push(Triangle::new(v1, v2, v3))
+        }
+        Object { vertices: new_vertices, faces: mesh.faces.clone(), triangles: triangles, transform: transform }
     }
 
     pub fn intersects(&self, ray: Ray) -> Option<Intersection> {
         let mut int = None;
 
-        for f in self.faces.iter() {
-            let v1 = self.vertices[f.v1_off];
-            let v2 = self.vertices[f.v2_off];
-            let v3 = self.vertices[f.v3_off];
-            let triangle = Triangle { v1: v1.position, v2: v2.position, v3: v3.position};
-            let normal = (v1.normal + v2.normal + v3.normal) / 3.0;
-
-            if let Some(t) = triangle.get_closest_hit(ray) {
+        for tri in self.triangles.iter() {
+            if let Some(t) = tri.get_closest_hit(ray) {
                 match int {
-                    None => int = Some(Intersection { position: ray.at(t), normal: normal }),
-                    Some(i) => if (i.position - ray.origin).magnitude() > t { 
-                        int = Some(Intersection { position: ray.at(t), normal: normal })
+                    None => int = Some(Intersection { position: ray.at(t), normal: tri.normal(ray.at(t)) }),
+                    Some(i) => if (i.position - ray.origin).magnitude() > t {
+                        int = Some(Intersection { position: ray.at(t), normal: tri.normal(ray.at(t)) })
                     }
                 }
             }
         }
+
+        // for f in self.faces.iter() {
+        //     let v1 = self.vertices[f.v1_off];
+        //     let v2 = self.vertices[f.v2_off];
+        //     let v3 = self.vertices[f.v3_off];
+        //     let triangle = Triangle { v1: v1.position, v2: v2.position, v3: v3.position};
+        //     let normal = (v1.normal + v2.normal + v3.normal) / 3.0;
+
+        //     if let Some(t) = triangle.get_closest_hit(ray) {
+        //         match int {
+        //             None => int = Some(Intersection { position: ray.at(t), normal: normal }),
+        //             Some(i) => if (i.position - ray.origin).magnitude() > t { 
+        //                 int = Some(Intersection { position: ray.at(t), normal: normal })
+        //             }
+        //         }
+        //     }
+        // }
         
         int
     }
