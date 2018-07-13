@@ -22,7 +22,7 @@ use mesh::Mesh;
 fn main() {
 	let path = Path::new(r"out.png");
 	let sphere = Sphere {
-		center: Vec3f{ x: 0.0, y: 0.0, z: 0.0},
+		center: Point3f { x: 0.0, y: 0.0, z: 0.0},
 		radius: 0.3,
 	};
 	let suzanne_mesh = Mesh::load(Path::new(r"cube.obj")).unwrap();
@@ -33,15 +33,15 @@ fn main() {
 	let width: u32 = 500;
 	let height: u32 = 500;
 	let mut pixels: Vec<Color> = vec![Color { r: 0.0, g: 0.0, b: 0.0}; (width * height) as usize];
-	let camera_pos = Vec3f { x: 0.0, y: 0.0, z: 1.0};
-	let light_pos = Vec3f { x: -0.5, y: 0.0, z: 1.0};
+	let camera_pos = Point3f { x: 0.0, y: 0.0, z: 1.0};
+	let light_pos = Point3f { x: -0.5, y: 0.0, z: 1.0};
 	for pixel_y in 0..height {
 		let h2 = height / 2;
 		for pixel_x in 0..width {
 			let w2 = width / 2;
 			let screen_x = (pixel_x as i32 - w2 as i32) as f32 / w2 as f32;
 			let screen_y = (h2 as i32 - pixel_y as i32 ) as f32 / h2 as f32;
-			let screen_pos = Vec3f { x: screen_x, y: screen_y, z: 0.0 };
+			let screen_pos = Point3f { x: screen_x, y: screen_y, z: 0.0 };
 			let camera_ray = Ray::new(camera_pos, screen_pos - camera_pos);
 			// if sphere.get_closest_hit(camera_ray).is_some() {
 			// 	let t = sphere.get_closest_hit(camera_ray).unwrap();

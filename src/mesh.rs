@@ -19,12 +19,6 @@ pub struct Mesh {
     pub faces: Vec<Face>
 }
 
-#[derive(Copy, Clone)]
-pub struct Intersection {
-    pub position: Vec3f,
-    pub normal: Vec3f
-}
-
 impl Mesh {
     pub fn load(path: &Path) -> Option<Mesh> {
         let mut vertices = Vec::new();
@@ -35,7 +29,7 @@ impl Mesh {
             Ok((models, _)) => {
                 let mesh = &models[0].mesh;
                 for i in 0..(mesh.positions.len() / 3) {
-                    let position = vec3(mesh.positions[i*3], mesh.positions[i*3+1], mesh.positions[i*3+2]);
+                    let position = Point3f::new(mesh.positions[i*3], mesh.positions[i*3+1], mesh.positions[i*3+2]);
                     let normal = vec3(mesh.normals[i*3], mesh.normals[i*3+1], mesh.normals[i*3+2]).normalize();
                     vertices.push(Vertex { position: position, normal: normal});
                 }

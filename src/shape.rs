@@ -6,28 +6,28 @@ use types::*;
 
 #[derive(Copy, Clone)]
 pub struct Vertex {
-    pub position: Vec3f,
+    pub position: Point3f,
     pub normal: Vec3f
 }
 
 #[derive(Copy, Clone)]
 pub struct AABB {
-	pub min: Vec3f,
-	pub max: Vec3f,
+	pub min: Point3f,
+	pub max: Point3f,
 }
 
 pub trait Shape {
-	fn normal(&self, point: Vec3f) -> Vec3f;
+	fn normal(&self, point: Point3f) -> Vec3f;
 	fn get_closest_hit(&self, ray: Ray) -> Option<f32>;
 }
 
 pub struct Sphere {
-	pub center: Vec3f,
+	pub center: Point3f,
 	pub radius: f32
 }
 
 impl Shape for Sphere {
-	fn normal(&self, point: Vec3f) -> Vec3f {
+	fn normal(&self, point: Point3f) -> Vec3f {
 		(point - self.center).normalize()
 	}
 
@@ -95,10 +95,10 @@ impl Triangle {
 	// TODO: move to Shape
 	pub fn aabb(&self) -> AABB {
 		// FIXME
-		AABB { min: Vec3f::new(0.0, 0.0, 0.0), max: Vec3f::new(0.0, 0.0, 0.0) }
+		AABB { min: Point3f::new(0.0, 0.0, 0.0), max: Point3f::new(0.0, 0.0, 0.0) }
 	}
 
-	fn get_barycentric(&self, p: Vec3f) -> Point2f {
+	fn get_barycentric(&self, p: Point3f) -> Point2f {
 		let v0 = self.v2.position - self.v1.position;
 		let v1 = self.v3.position - self.v1.position;
 		let v2 = p - self.v1.position;
@@ -118,7 +118,7 @@ impl Triangle {
 
 
 impl Shape for Triangle {
-	fn normal(&self, point: Vec3f) -> Vec3f {
+	fn normal(&self, point: Point3f) -> Vec3f {
 		// TODO: interpolate the vertex normals
 		let uv = self.get_barycentric(point);
 		let norm = (1.0 - uv.x - uv.y) * self.v1.normal + uv.x * self.v2.normal + uv.y * self.v3.normal;

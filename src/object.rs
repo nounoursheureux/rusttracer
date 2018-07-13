@@ -16,7 +16,7 @@ impl Object {
         let inv_trans = transform.invert().unwrap().transpose();
         let new_vertices: Vec<Vertex> = mesh.vertices.iter().map(|vert| {
             Vertex { 
-                position: (transform * vert.position.extend(1.0)).truncate(), 
+                position: Point3f::from_homogeneous(transform * vert.position.to_homogeneous()), 
                 normal: (inv_trans * vert.normal.extend(0.0)).truncate() 
             }
         }).collect();
