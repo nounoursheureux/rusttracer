@@ -7,7 +7,7 @@ use std::io::BufWriter;
 use self::png::HasParameters;
 use self::png::EncodingError;
 use types::Vec3f;
-use std::ops::{Add, AddAssign};
+use std::ops::{Add, AddAssign, Mul};
 
 #[derive(Copy, Clone)]
 pub struct Color {
@@ -45,6 +45,26 @@ impl Add for Color {
 impl AddAssign for Color {
 	fn add_assign(&mut self, other: Color) {
 		*self = *self + other;
+	}
+}
+
+impl Mul<f32> for Color {
+	type Output = Color;
+
+	fn mul(self, other: f32) -> Color {
+		Color {
+			r: self.r * other,
+			g: self.g * other,
+			b: self.b * other
+		}
+	}
+}
+
+impl Mul<Color> for f32 {
+	type Output = Color;
+
+	fn mul(self, other: Color) -> Color {
+		other * self
 	}
 }
 

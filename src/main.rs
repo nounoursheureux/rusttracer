@@ -8,6 +8,7 @@ mod util;
 mod mesh;
 mod object;
 mod scene;
+mod material;
 // mod bvh;
 
 use cgmath::vec3;
@@ -20,14 +21,24 @@ use util::*;
 use object::*;
 use mesh::Mesh;
 use scene::Scene;
+use material::Material;
 
 fn shoot_ray(scene: &Scene, ray: Ray) -> Color {
 	if let Some(inter) = scene.intersects(ray) {
 		let mut color = Color::black();
+		let V = (ray.origin - inter.position).normalize();
 		for light in scene.lights.iter() {
+			let shadow_ray = Ray::between(inter.position + inter.normal * 0.005, *light);
+			if scene.intersects(shadow_ray).is_some() { continue; } // light doesn't reach
+
+			if inter.material.reflective {
+				let reflected_dir = 2.0 * V.dot(inter.normal) * inter.normal - V;
+				let reflected_ray = Ray::new(inter.position + 0.05 * reflected_dir, reflected_dir);
+				color += shoot_ray(scene, reflected_ray);
+			}
 			let L = (scene.lights[0] - inter.position).normalize();
 			let intensity = L.dot(inter.normal);
-			color += Color::new(1.0 * intensity, 0.0, 0.0);
+			color += intensity * inter.material.color;
 		}
 		color
 	} else {
@@ -42,9 +53,12 @@ fn main() {
 		radius: 0.3,
 	};
 	let suzanne_mesh = Mesh::load(Path::new(r"suzanne.obj")).unwrap();
-	println!("{}", suzanne_mesh.vertices.len());
+	let plane_mesh = Mesh::load(Path::new(r"plane.obj")).unwrap();
 	let transform = Matrix4f::identity();
-	let suzanne = Object::new(&suzanne_mesh, transform);
+	let red = Material { color: Color::new(1.0, 0.0, 0.0), opaque: true, reflective: false };
+	let blue = Material { color: Color::new(0.0, 0.0, 1.0), opaque: true, reflective: true };
+	let suzanne = Object::new(&suzanne_mesh, transform, red);
+	let plane = Object::new(&plane_mesh, Matrix4f::from_translation(vec3(0.0, -0.7, 0.0)), blue);
 	// let triangle = Triangle::new(vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(0.0, 0.0, 0.0));
 	let mut scene = Scene::new();
 	let width: u32 = 500;
@@ -53,6 +67,7 @@ fn main() {
 	let camera_pos = Point3f { x: 0.0, y: 0.0, z: 1.0};
 	let light_pos = Point3f { x: -0.5, y: 0.0, z: 1.0};
 	scene.objects.push(suzanne);
+	scene.objects.push(plane);
 	scene.lights.push(light_pos);
 	for pixel_y in 0..height {
 		let h2 = height / 2;

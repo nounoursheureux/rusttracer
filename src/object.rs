@@ -3,16 +3,18 @@ use types::*;
 use cgmath::prelude::*;
 use cgmath::vec4;
 use shape::{Triangle, Shape, Vertex};
+use material::Material;
 
 pub struct Object {
     pub vertices: Vec<Vertex>,
     pub faces: Vec<Face>,
     pub triangles: Vec<Triangle>,
-    pub transform: Matrix4f
+    pub transform: Matrix4f,
+    pub material: Material
 }
 
 impl Object {
-    pub fn new(mesh: &Mesh, transform: Matrix4f) -> Object {
+    pub fn new(mesh: &Mesh, transform: Matrix4f, material: Material)  -> Object {
         let inv_trans = transform.invert().unwrap().transpose();
         let new_vertices: Vec<Vertex> = mesh.vertices.iter().map(|vert| {
             Vertex { 
@@ -27,7 +29,7 @@ impl Object {
             let v3 = new_vertices[f.v3_off];
             triangles.push(Triangle::new(v1, v2, v3))
         }
-        Object { vertices: new_vertices, faces: mesh.faces.clone(), triangles: triangles, transform: transform }
+        Object { vertices: new_vertices, faces: mesh.faces.clone(), triangles: triangles, transform: transform, material: material }
     }
 
     pub fn intersects(&self, ray: Ray) -> Option<Intersection> {

@@ -20,6 +20,13 @@ impl Ray {
 		}
 	}
 
+	pub fn between(from: Point3f, to: Point3f) -> Ray {
+		Ray {
+			origin: from,
+			direction: (to - from).normalize()
+		}
+	}
+
 	pub fn at(&self, t: f32) -> Point3f {
 		self.origin + t * self.direction
 	}
