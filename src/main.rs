@@ -25,9 +25,9 @@ fn main() {
 		center: Point3f { x: 0.0, y: 0.0, z: 0.0},
 		radius: 0.3,
 	};
-	let suzanne_mesh = Mesh::load(Path::new(r"cube.obj")).unwrap();
+	let suzanne_mesh = Mesh::load(Path::new(r"suzanne.obj")).unwrap();
 	println!("{}", suzanne_mesh.vertices.len());
-	let transform = Matrix4f::from_scale(0.1);
+	let transform = Matrix4f::identity();
 	let suzanne = Object::new(&suzanne_mesh, transform);
 	// let triangle = Triangle::new(vec3(-1.0, 1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(0.0, 0.0, 0.0));
 	let width: u32 = 500;
@@ -57,8 +57,8 @@ fn main() {
 			if let Some(inter) = suzanne.intersects(camera_ray) {
 				let L = (light_pos - inter.position).normalize();
 				let intensity = L.dot(inter.normal);
-				// pixels[(pixel_y * width + pixel_x) as usize] = Color::new(1.0 * intensity, 0.0, 0.0);
-				pixels[(pixel_y * width + pixel_x) as usize] = Color::from_vec(inter.normal);
+				pixels[(pixel_y * width + pixel_x) as usize] = Color::new(1.0 * intensity, 0.0, 0.0);
+				// pixels[(pixel_y * width + pixel_x) as usize] = Color::from_vec(inter.normal);
 			}
 		}
 	}

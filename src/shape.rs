@@ -119,11 +119,9 @@ impl Triangle {
 
 impl Shape for Triangle {
 	fn normal(&self, point: Point3f) -> Vec3f {
-		// TODO: interpolate the vertex normals
 		let uv = self.get_barycentric(point);
-		let norm = (1.0 - uv.x - uv.y) * self.v1.normal + uv.x * self.v2.normal + uv.y * self.v3.normal;
+		let norm = (1.0 - uv.x - uv.y) * self.v3.normal + uv.x * self.v1.normal + uv.y * self.v2.normal;
 		norm.normalize()
-		// (self.v2.position - self.v1.position).cross(self.v3.position - self.v1.position).normalize()
 	}
 
 	fn get_closest_hit(&self, ray: Ray) -> Option<f32> {
