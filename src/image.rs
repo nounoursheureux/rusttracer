@@ -7,6 +7,7 @@ use std::io::BufWriter;
 use self::png::HasParameters;
 use self::png::EncodingError;
 use types::Vec3f;
+use std::ops::{Add, AddAssign};
 
 #[derive(Copy, Clone)]
 pub struct Color {
@@ -23,7 +24,30 @@ impl Color {
 	pub fn from_vec(v: Vec3f) -> Color {
 		Color { r: v.x, g: v.y, b: v.z }
 	}
+
+	pub fn black() -> Color {
+		Color { r: 0.0, g: 0.0, b: 0.0 }
+	}
 }
+
+impl Add for Color {
+	type Output = Color;
+
+	fn add(self, other: Color) -> Color {
+		Color {
+			r: f32::min(self.r + other.r, 1.0),
+			g: f32::min(self.g + other.g, 1.0),
+			b: f32::min(self.b + other.b, 1.0) 
+		}
+	}
+}
+
+impl AddAssign for Color {
+	fn add_assign(&mut self, other: Color) {
+		*self = *self + other;
+	}
+}
+
 
 pub struct Image {
 	pub width: u32,
